@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+</style>
+  <title> Quiz Application </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Linking CSS   -->
+ <link rel="stylesheet" href="style.css">
+
+ <!-- Linking Google fonts -->
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alata&family=Alexandria:wght@100&family=Bree+Serif&family=Lobster&family=Michroma&family=Poppins:wght@300&family=Prompt&family=Roboto&display=swap" rel="stylesheet">
+</head>
+<body>  
+ <div class="quiz-home-box custom-box show">  <!--"quiz-home-box" Starts -->
+ <h4>you'll have 30 seconds to answer each question.</h4>
+ 
+     <h1>Select Category</h1>
+     <div class="category-box">
+     </div>
+</div>   <!--"quiz-home-box" Ends -->
+<div class="quiz-box custom-box">    <!-- "quiz-box" Starts -->
+    <h1 class="category-text"></h1>
+<div class="stats">
+<div class="quiz-time">
+<div class="remaining-time"></div>
+    <span class="time-up-text">Time's Up</span>
+</div>
+<div class="score-board">
+<span class="score-text">score:</span>
+<span class="correct-answer"></span>
+</div>
+</div>
+<div class="question-box">
+<div class="current-question-num">
+</div>
+<div class="question-text">
+    
+</div>
+</div>
+<div class="option-box">
+
+</div>
+<div class="answer-description">
+    
+</div>
+<div class="next-question">
+<button type="button" class="next-question-btn btn">Next question</button>
+<button type="button" class="see-result-btn btn">See Your Result</button>
+</div>
+</div>  <!-- "quiz-box" Ends -->
+<div class="quiz-over-box custom-box">    <!-- "quiz-over-box" Starts -->
+<h1>Quiz Result</h1>
+<h4>Total Questions: <span class="total-questions"></span></h4>
+<h4>Attempt: <span class="total-attempt"></span></h4>
+<h4>Correct: <span class="total-correct"></span></h4>
+<h4>Wrong: <span class="total-wrong"></span></h4>
+<h4>Percentage: <span class="percentage"></span></h4>
+<button type="button" class="start-again-quiz-btn btn">Start Again</button>
+<button type="button" class="go-home-btn btn">Go To Home</button>
+</div>  <!-- "quiz-over-box" Ends -->
+
+
+
+
+
+<!-- Adding script -->
+<script>
+ 
+const questionText=document.querySelector(".question-text");
+const optionBox=document.querySelector(".option-box");
+const currentQuestionNum=document.querySelector(".current-question-num");
+const answerDescription=document.querySelector(".answer-description");
+const nextQuestionBtn=document.querySelector(".next-question-btn");
+const correctAnswers=document.querySelector(".correct-answer");
+const seeResultBtn=document.querySelector(".see-result-btn");
+const remainingTime=document.querySelector(".remaining-time");
+const timeUpText=document.querySelector(".time-up-text");
+const quizHomeBox=document.querySelector(".quiz-home-box");
+const quizBox=document.querySelector(".quiz-box");
+const quizOverBox=document.querySelector(".quiz-over-box");
+const startAgainQuizBtn=document.querySelector(".start-again-quiz-btn");
+const goHomeBtn=document.querySelector(".go-home-btn");
+const categoryBox=document.querySelector(".category-box");
+const categoryText=document.querySelector(".category-text");
+//const startQuizBtn=document.querySelector(".start-quiz-btn");
+let attempt=0;
+let questionIndex=0;
+let score=0;
+let number=0;
+let myArray=[];
+let interval;
+let categoryIndex;
+    //Adding category and questions
+myApp=[
+{
+     category:"Pipe and Cistern",
+     quizWrap:[ 
+    {
+    question:'A tap can empty a tank in one hour. A second tap can empty it in 30 minutes. If both the taps operate simultaneously, how much time is needed to empty the tank?',
+    options:['20 minutes','30 minutes','40 minutes','50 minutes'],
+    answer:0
+     
+   },
+   {
+    question:'A tap can fill a tank in 6 hours. After half the tank is filled, three more similar taps are opened. What is the total time taken to fill the tank completely?',
+    options:['4 hrs ','4 hrs 15 min','3 hrs 15 min','3 hrs 45 min'],
+    answer:3
+   },
+   {
+    question:'Two pipe A and B can fill a cistern in 36 and 45 hours. Both the pipe open together then how much time will be taken to filled the tank?',
+    options:['20 hours','40 hours','25 hours','18 hours'],
+    answer:0
+   },
+   {
+    question:'3/5 part of a tank filled in 10 minute. then how much time will take to fill the rest part?',
+    options:['5 minutes ',' 19/3 minutes','10/3 minutes','6 minutes'],
+    answer:1
+   },
+   {
+    question:'A pipe can fill a tank in 15 hrs. Due to leakage in the bottom, it is filled in 40 hrs. If the tank is full, how much time the leakage take to empty it?',
+    options:['45 hours','48 hours','24 hours','72 hours'],
+    answer:2
+   },
+   {
+    question:'Two taps A and B separately can fill a tank in 25 and 30 minutes respectively. If taps A fills water at the rate of 120 litres/minute then how many litres water per minute filled by B?',
+    options:['200','100','75','80'],
+    answer:1
+   },
+   {
+    question:'Inlet pipe A can fill a tank in 12 hours and B can empty it in 15 hours. Both pipes are opened alternately 1st hours A, 2nd hours B. In how many hours tank will be filled?',
+    options:['111 hrs','30 hrs','40 hrs','140 hrs'],
+    answer:0
+   },
+   {
+    question:'There are two taps A and B. the capacity of B is 80% more than that of A. Both the taps can fill a tank in 45 hours. Then B alone can fill this tank in-',
+    options:['48 hrs','70 hrs','72 hrs','66 hrs'],
+    answer:1
+   },
+   {
+    question:'One inlet pipe A is 5 times faster than second inlet pipe B and takes 48 minutes less than the fill pipe B. When will the cistern will be full if both fill pipes are opened together?',
+    options:['12 minutes','8 minutes','10 minutes','15 minutes'],
+    answer:2 
+   },
+   {
+    question:'Two inlet pipes A and B can fill a tank in respectively. 15 and 30 hours. Pipe C fill 5 litre/per min. If all pipes are opened together. then whole tank fill in 5 hours. Find tank capacity?',
+    options:['320 litre','450 litre','3000 litre','350 litre'],
+    answer:2
+   }
+        ]
+},
+    {
+     category:"HTML Questions",
+     quizWrap:[ 
+        {
+    question:'Apart from <b> tag, what other tag makes text bold?',
+    options:['fat','strong','bold','em'],
+    answer:1
+   },
+   {
+    question:'What should be the first tag in any HTML document?',
+    options:['head','html','title','document'],
+    answer:1
+   },
+   {
+    question:'How can you make a list with numbers?',
+    options:['By using "dl" tag '  ,'By using "ol" tag','By using "li" tag','By using "ul" tag'],
+    answer:1
+   },
+   {
+    question:'What tag is used to display a picture in a HTML page?',
+    options:['picture','image','img','src'],
+    answer:2
+   },
+   {
+    question:'HTML web pages can be read and rendered by',
+    options:['Compiler','Server','Browser','App'],
+    answer:2
+   },
+   {
+    question:'Which of the following is not a browser?',
+    options:["Microdoft's Bing",'Netscape Navigator','Mozilla Firefox','Opera'],
+    answer:0
+   },
+   {
+    question:'Which HTML tag produces the biggest heading?',
+    options:[' h3 ',' h6 ',' h8 ',' h1 '],
+    answer:3
+   },
+   {
+    question:'What is the purpose of using div tags in HTML?',
+    options:['For creating Different styles.','For creating different sections.','For adding headings.','For adding titles.'],
+    answer:1
+   },
+   {
+    question:'Which of the following value of target attribute is used to open a hyperlink in a new tab or window?',
+    options:['_space','_self','_blank','_parent'],
+    answer:2
+   },
+   {
+    question:'Which of the following is the correct way to add background color in HTML?',
+    options:['< body color = “green” >','< body bg-color = “green” >','< body style = “background-color=green” >','< body style = “background-color: green;” >'],
+    answer:3
+   }
+        ]
+},
+    {
+     category:"Problem on Ages",
+     quizWrap:[ 
+     {
+         question:"The ratio of present age of Abhishek, Rahul and Chandan is 2 : 3 : 7. Rahul is 12 years old. what will be the ratio of their age after 4 years?",
+         options:["3:4:8","1:2:3","2:4:7","5:6:8"],
+         answer:0
+        },
+        {
+         question:"Rahul is 40 years old and Nitu is 60 years old. How many years ago the ratio of their ages was 3 : 5?",
+         options:["10 years","20 years","37 years","5 years"],
+         answer:0
+        },
+        {
+         question:"A man's age is 120% of what it was 3 years ago, but it is 75% of the age of after 6 years. What is his present age?",
+         options:["11 years","17 years","29 years","18 years"],
+         answer:3
+        },
+        {
+         question:"The ratio of present age of Rajendra and Mahendra is 5:7.After 8 years, Rajendra will be 48 years old. What will be the age of Mahendra after 12 years?",
+         options:["(a) 70 years","(b) 75 years","(c) 72 years","(d) 68 years"],
+         answer:3 
+        }
+        ,
+        {
+         question:"At this time the ratio of age of Ashok and Pardeep is 4 : 3. After 6 years, the age of Ashok will be 26 years. At present find the age of Pardeep?",
+         options:["12 years","15 years","39/2 years","21 years"],
+         answer:1
+        },
+        {
+    question:'The ages of Hasnu and Niraj are 30 years and 46 years respectively. How many years before the ratio of their ages was 3:5?',
+    options:['15 year','20 year','37 year','6 year'],
+    answer:3
+   },
+   {
+    question:`The ratio between the present ages of Indira and Lizzy is 3:8 respectively. After 8 year, Indira's age will be 20 year. What was Lizzy's age 5 year ago?`,
+    options:['37 year','27 year','28 year','38 year'],
+    answer:1
+   },
+   {
+    question:'The ratio of the present ages of two brothers is 1:2 and 5 years ago, the ratio was 1 : 3. What will be the ratio of their ages after 5 years?',
+    options:['1:4','2:3','3:5','5:6'],
+    answer:2
+   },
+   {
+    question:'The ages of Nishi and Vinee are in the ratio 6:5 respectively. After 9 years, the ratio of their ages will be 9:8. What is the difference in their ages now?',
+    options:['3 year','5 year','7 year','9 year'],
+    answer:0
+   },
+   {
+    question:'The ages of Neeraj and Kusum are in the ratio of 8:7 respectively. After 10 years, the ratio of their ages will be 13:12. What is the difference between their ages?',
+    options:['4 year','2 year','8 year','6 year'],
+    answer:1
+   }
+        ]
+    },
+    
+     {
+     category:"Profit and Loss",
+     quizWrap:[ 
+     {
+    question:'A man buys 12 articles for Rs. 12/- and sells them at the rate of Rs. 1.25 per article. His gain percentage is:',
+    options:['20','25','15','18'],
+    answer:1
+   },
+   {
+    question:'If selling price of an article is 8/5 times of its cost price, the profit per cent on it is:' ,
+    options:['120%','160%' ,' 40%','60%'],
+    answer:3
+   },
+   {
+    question:'A man bought an old typewriter for Rs. 1200 and spent Rs. 200 on its repair. He sold it for Rs. 1680. His profit per cent is:',
+    options:['20%','10%','8%','16%'],
+    answer:0
+   },
+   {
+    question:'A house worth Rs. 1,50,000 is sold by X at a 5% profit to Y, Y sells the house back to X at a 2% loss. Then find profit and loss in the entire transaction.',
+    options:['X gains Rs. 4,350','X loses Rs. 4,350','X gains Rs. 3,150 ','X loses Rs. 3,150'],
+    answer:0
+   },
+   {
+    question:'A merchant buys an article for Rs. 27 and sells it at a profit of 10% of the selling price. The selling price of the article is:',
+    options:['Rs.29.70','Rs.30','Rs.37','Rs.32'],
+    answer:1
+   },
+   {
+    question:'A radio is sold for Rs. 990 at a profit of 10%. What would have been the actual profit or loss on it had it been sold for Rs.890 ?',
+    options:['Rs. 10 loss','Rs. 10 profit','Rs. 90 loss','Rs. 90 profit'],
+    answer:0
+   },
+   {
+    question:'A coconut merchant finds that the cost price of 2750 coconuts is the same as the selling price of 2500 coconuts. His loss or gain will be',
+    options:['5% loss','10% gain','15% loss','20% gain'],
+    answer:1
+   },
+   {
+    question:'A merchant finds his profit as 20% of the selling price. His actual profit is',
+    options:['20%','22%','25%','30%'],
+    answer:2
+   },
+   {
+    question:'An article is sold at 5% profit. The ratio of selling price and cost price will be',
+    options:['1:5','20:21','21: 20','5:1'],
+    answer:2
+   },
+   {
+    question:'An item costing ₹200 is being sold at 10% loss. If the price is further reduced by 5% the selling price will be',
+    options:['₹ 170','₹ 171','₹ 175','₹ 179'],
+    answer:1
+   }
+         
+        ]
+    }
+  
+        ]
+function createCategory(){
+   //console.log(myApp[1].category);
+    for(let i=0; i<myApp.length; i++){
+        categoryList=document.createElement("div");
+        categoryList.innerHTML=myApp[i].category;
+        categoryList.setAttribute("data-id",i);
+        categoryList.setAttribute("onclick","selectCategory(this)");
+        categoryBox.appendChild(categoryList)
+    }
+    
+}
+function selectCategory(ele){
+    categoryIndex=ele.getAttribute("data-id");
+    //console.log(categoryIndex)
+    categoryText.innerHTML=myApp[categoryIndex].category;
+    quizHomeBox.classList.remove("show");
+    quizBox.classList.add("show");
+    nextQuestion();
+}
+function load(){
+    number++;
+   questionText.innerHTML=myApp[categoryIndex].quizWrap[questionIndex].question;
+    creatOptions();
+    scoreBoard();
+    currentQuestionNum.innerHTML=number + " / " +myApp[categoryIndex].quizWrap.length;
+}
+function creatOptions(){
+    optionBox.innerHTML="";
+    let animationDelay=0.2;
+    for(let i=0; i<myApp[categoryIndex].quizWrap[questionIndex].options.length; i++){
+        const option=document.createElement("div");
+              option.innerHTML=myApp[categoryIndex].quizWrap[questionIndex].options[i];
+              option.classList.add("option");
+              option.id=i;
+              option.style.animationDelay=animationDelay + "s";
+              animationDelay=animationDelay+0.2;
+              option.setAttribute("onclick","check(this)");
+              optionBox.appendChild(option);
+        
+    }
+}
+
+function generateRandomQuestion(){
+    const randomNumber=Math.floor(Math.random() * myApp[categoryIndex].quizWrap.length);
+   let hitDuplicate=0;
+   if(myArray.length == 0){
+        questionIndex=randomNumber;
+    }
+    else{
+        for(let i=0; i<myArray.length; i++){
+            if(randomNumber == myArray[i]){
+                //if duplicate found
+                hitDuplicate=1;
+                
+            }
+        }
+        if(hitDuplicate == 1){
+            generateRandomQuestion();
+            return;
+        }
+        else{
+            questionIndex=randomNumber;
+        }
+    }
+    
+    myArray.push(randomNumber);
+    console.log(myArray)
+    load();
+}
+
+function check(ele){
+    const id=ele.id;
+    if(id==myApp[categoryIndex].quizWrap[questionIndex].answer){
+       ele.classList.add("correct");
+        score++;
+        scoreBoard();
+    }
+    else{
+        ele.classList.add("wrong");
+        //show correct option when clicked answer is wrong
+        for(let i=0; i<optionBox.children.length; i++){
+            if(optionBox.children[i].id==myApp[categoryIndex].quizWrap[questionIndex].answer){
+                optionBox.children[i].classList.add("show-correct");
+            }
+        }
+    }
+    attempt++;
+    disableOptions()
+    showAnswerDescription();
+    showNextQuestionBtn();
+    stopTimer();
+    
+    if(number == myApp[categoryIndex].quizWrap.length){
+        quizOver();
+    }
+}
+function timeIsUp(){
+    showTimeUpText();
+    //when time is up Show Correct Answer
+    for(let i=0; i<optionBox.children.length; i++){
+            if(optionBox.children[i].id==myApp[categoryIndex].quizWrap[questionIndex].answer){
+                optionBox.children[i].classList.add("show-correct");
+                if(number == myApp[categoryIndex].quizWrap.length){
+                    quizOver();
+                  }
+            }
+        }
+    disableOptions()
+    showAnswerDescription();
+    showNextQuestionBtn();
+    if(number == myApp.length){
+        quizOver();
+      }
+}
+function startTimer(){
+    let timeLimit=30;
+    remainingTime.innerHTML=timeLimit;
+    remainingTime.classList.remove("less-time");
+    interval=setInterval(()=>{
+      timeLimit--;
+        if(timeLimit < 10){
+            timeLimit="0"+timeLimit;
+            
+            }
+            if(timeLimit < 6){
+                remainingTime.classList.add("less-time");  
+            }
+            remainingTime.innerHTML=timeLimit;
+            if(timeLimit == 0){
+            clearInterval(interval);
+            timeIsUp();
+    }
+    },1000)
+}
+function stopTimer(){
+    clearInterval(interval);
+}
+function disableOptions(){
+    for(let i=0; i<optionBox.children.length; i++){
+        optionBox.children[i].classList.add("already-answered")
+    }
+}
+function showAnswerDescription(){
+    if(typeof myApp[categoryIndex].quizWrap[questionIndex].description !== 'undefined'){
+        answerDescription.classList.add("show");
+        answerDescription.innerHTML=myApp[categoryIndex].quizWrap[questionIndex].description;
+    }
+    
+}
+function hideAnswerDescription(){
+    answerDescription.classList.remove("show");
+    answerDescription.innerHTML="";
+}
+
+function showNextQuestionBtn(){
+    nextQuestionBtn.classList.add("show");
+}
+function hideNextQuestionBtn(){
+    nextQuestionBtn.classList.remove("show");
+}
+function showTimeUpText(){
+    timeUpText.classList.add("show");
+}
+function hideTimeUpText(){
+    timeUpText.classList.remove("show");
+    
+}
+function scoreBoard(){
+    correctAnswers.innerHTML=score;
+}
+
+nextQuestionBtn.addEventListener("click",nextQuestion);
+
+function nextQuestion(){
+   generateRandomQuestion();
+    hideNextQuestionBtn();
+    hideAnswerDescription();
+    hideTimeUpText();
+    startTimer();
+}
+function quizResult(){
+    document.querySelector(".total-questions").innerHTML=myApp[categoryIndex].quizWrap.length;
+    document.querySelector(".total-attempt").innerHTML=attempt;
+    document.querySelector(".total-correct").innerHTML=score;
+    document.querySelector(".total-wrong").innerHTML=attempt-score;
+    const percentage=(score/myApp[categoryIndex].quizWrap.length)*100;
+    document.querySelector(".percentage").innerHTML=percentage.toFixed(2) +"%";
+}
+function resetQuiz(){
+  attempt=0;
+  //questionIndex=0;
+  score=0;
+  number=0;
+  myArray=[];
+}
+
+function quizOver(){
+    nextQuestionBtn.classList.remove("show");
+    seeResultBtn.classList.add("show");
+}
+seeResultBtn.addEventListener("click", ()=>{
+    quizBox.classList.remove("show");
+    seeResultBtn.classList.remove("show");
+    quizOverBox.classList.add("show");
+    quizResult();
+     })
+
+startAgainQuizBtn.addEventListener("click", ()=>{
+    quizBox.classList.add("show");
+    quizOverBox.classList.remove("show");
+    resetQuiz();
+    nextQuestion();
+})
+
+goHomeBtn.addEventListener("click", ()=>{
+    quizOverBox.classList.remove("show");
+    quizHomeBox.classList.add("show")
+    resetQuiz();
+})
+  
+//startQuizBtn.addEventListener("click", ()=>{
+   // quizHomeBox.classList.remove("show");
+   // quizBox.classList.add("show");
+   // nextQuestion();
+//})
+
+window.onload=()=>{
+    createCategory();
+}
+
+ 
+</script>
+</body>
+</html>
